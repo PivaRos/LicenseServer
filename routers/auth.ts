@@ -77,7 +77,7 @@ AuthRouter.post(
           case "Invalid value":
             return [res.status(400), res.json({ message: e.errors[0].msg })];
         }
-      return [res.status(501), res.json(e.message)];
+      return [res.status(500), res.json(e.message)];
     }
   }
 );
