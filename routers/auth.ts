@@ -5,6 +5,7 @@ import {
   OneOfErrorType,
   body,
 } from "express-validator";
+import { MacToFileName } from "./utility";
 
 const AuthRouter = Router();
 
@@ -21,7 +22,9 @@ AuthRouter.get(
     try {
       const result = validationResult(req);
       if (!result.isEmpty()) result.throw();
-      const licenseString = localStorage.getItem(req.params?.SoftwareID);
+      const licenseString = localStorage.getItem(
+        MacToFileName(req.params?.SoftwareID)
+      );
       if (licenseString) {
         const License = JSON.parse(licenseString) as {
           license: boolean;
@@ -64,7 +67,7 @@ AuthRouter.post(
           res.json({ message: "this id is already registered" }),
         ];
       localStorage.setItem(
-        req.body.SoftwareID,
+        MacToFileName(req.body.SoftwareID),
         JSON.stringify({
           license: false,
           name: req.body.name,
@@ -77,7 +80,7 @@ AuthRouter.post(
           case "Invalid value":
             return [res.status(400), res.json({ message: e.errors[0].msg })];
         }
-      return [res.status(500), res.json(e.message)];
+      return [res.status(501), res.json({ ErrorObject1: e })];
     }
   }
 );
