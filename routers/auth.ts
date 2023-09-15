@@ -42,6 +42,7 @@ AuthRouter.get(
         res.json({ message: "no record found for license" }),
       ];
     } catch (e: any) {
+      console.log(e);
       if (e.errors && e.errors.length > 0)
         switch (e.errors[0].msg) {
           case "Invalid value":
