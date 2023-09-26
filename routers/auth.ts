@@ -6,6 +6,7 @@ import {
   body,
 } from "express-validator";
 import { MacToFileName } from "./utility";
+import path from "path";
 
 const AuthRouter = Router();
 
@@ -15,6 +16,9 @@ if (typeof localStorage === "undefined" || localStorage === null) {
   localStorage = new LocalStorage("./scratch");
 }
 
+const configPath = path.join(__dirname, "../DefaultAppConfig.json");
+const appConfig = require(configPath);
+
 AuthRouter.get(
   "/state/:SoftwareID",
   param("SoftwareID").isMACAddress(),
@@ -22,6 +26,7 @@ AuthRouter.get(
     try {
       const result = validationResult(req);
       if (!result.isEmpty()) result.throw();
+      if (appConfig.allowAll) return res.sendStatus(200);
       const licenseString = localStorage.getItem(
         MacToFileName(req.params?.SoftwareID)
       );
